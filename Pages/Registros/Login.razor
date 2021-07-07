@@ -1,0 +1,98 @@
+﻿@page "/Login"
+
+@using LoginBlazor.Models
+@using LoginBlazor.BLL
+
+
+
+@inject IToastService toast
+@inject NavigationManager Nav
+@inject IJSRuntime Confirmacion
+
+<EditForm Model="user">
+
+
+    <div class="card bg-light">
+
+        <div class="card-header">
+            <div class="text-center">
+                <h1>Iniciar sesión</h1>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-center mt-3">
+
+            <div>
+                <span class="oi oi-person"></span>
+            </div>
+
+        </div>
+
+
+        <form>
+            <div class="form-group">
+                <div class="input-group mb-3">
+                    <div class="input-group-append">
+                        <span class="input-group-text"><i class="oi oi-person" /></span>
+                    </div>
+                    <InputText class="form-control" placeholder="Nombre de usuario" @bind-Value="nombre" />
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-append">
+                        <span class="input-group-text"><i class="oi oi-key" /></span>
+                    </div>
+                    <InputText class="form-control" placeholder="Contraseña" type="password" @bind-Value="clave" />
+                </div>
+                    
+              
+
+                    <div class="d-flex justify-content-center mt-4">
+                        <button class="btn btn-primary" @onclick="Logearse">Iniciar sesión</button>
+                        No tienes una cuenta?<a href="/RUsuarios" class="ml-2" @onclick="Logearse">Registrarse</a>
+                    </div>
+            </div>
+        </form>
+
+    </div>
+</EditForm>
+
+@code {
+
+    Usuarios user = new Usuarios();
+
+    string nombre;
+    string clave;
+
+    protected override void OnInitialized()
+    {
+        Nuevo();
+    }
+
+    public void Nuevo()
+    {
+        user = new Usuarios();
+
+    }
+    public void Logearse()
+    {
+        bool paso = false;
+
+        paso = UsuariosBLL.ExisteUsuario(nombre, clave);
+        toast.ShowInfo("Encontrado");
+        //if (paso)
+        //{
+        //    toast.ShowInfo("Encontrado");
+        //    //Nav.NavigateTo($"/Bienvenido");
+        //}
+        //else
+        //{
+        //    toast.ShowInfo("Encontrado");
+        //}
+    }
+
+    public void Registrar()
+    {
+        Nav.NavigateTo($"/Bienvenido");
+    }
+}

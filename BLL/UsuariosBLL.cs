@@ -145,5 +145,24 @@ namespace LoginBlazor.BLL
             }
             return Lista;
         }
+        public static bool ExisteUsuario(string user, string password)
+        {
+            bool paso = false;
+            Contexto contexto = new Contexto();
+
+            try
+            {
+                paso = contexto.Usuarios.Any(e => e.NombreDeUsuario.Contains(user) && e.Password.Contains(password));
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                contexto.Dispose();
+            }
+            return paso;
+        }
     }
 }

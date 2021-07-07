@@ -1,0 +1,141 @@
+﻿@page "/RUsuarios"
+@page "/RUsuarios/{USuarioId:int}"
+
+@using LoginBlazor.BLL
+@using LoginBlazor.Models
+@using Blazored.Toast;
+@using Blazored.Toast.Services;
+
+@inject IToastService toast
+
+<EditForm Model="usuario" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="card">
+        <div class="card-header">
+            <h1>Registro de usuarios</h1>
+        </div>
+
+        <div class="card-body">
+            
+                <div class="form-row align-items-center">
+                    <div class="col">
+                        <div class="form-group">
+                            <label>Usuario Id:</label>
+                            <div class="input-group">
+                                <InputNumber @bind-Value="usuario.UsuarioId" class="form-control " />
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-outline-info" @onclick="Buscar">
+                                        <i class="oi oi-magnifying-glass"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div class="form-group">
+                    <label>Nombre Usuario</label>
+                    <InputText @bind-Value="usuario.Nombre" class="form-control " />
+                </div>
+
+                
+                <div class="form-group">
+                    <label>Nombre de la Cuenta:</label>
+                    <InputText @bind-Value="usuario.NombreDeUsuario" class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label>Password:</label>
+                    <InputText @bind-Value="usuario.Password" class="form-control " />
+                </div>
+
+                <div class="form-group">
+                    <label>Confirmar Password</label>
+                    <InputText @bind-Value="confirmar" class="form-control" />
+                </div>
+
+        </div>
+
+        @*Botones: Nuevo, Guardar, Eliminar*@
+        <div class="card-footer">
+            <div class="form-group text-center" display: inline-block>
+                <button type="button" class="btn btn-group-lg btn-primary" @onclick="Nuevo">
+                    <i class="oi oi-file mr-2"></i>
+                    Nuevo
+                </button>
+                <button type="submit" class="btn btn-group-lg btn-success">
+                    <i class="oi oi-account-login" style="transform:rotate(90deg)"></i>
+                    Guardar
+                </button>
+                <button type="button" class="btn btn-group-lg btn-danger" @onclick="Eliminar">
+                    <i class="oi oi-trash mr-2"></i>
+                    Eliminar
+                </button>
+            </div>
+        </div>
+
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int UsuarioId { get; set; }
+
+    Usuarios usuario = new Usuarios();
+    string confirmar;
+
+    protected override void OnInitialized()
+    {
+        Nuevo();
+    }
+
+    private void Nuevo()
+    {
+        usuario = new Usuarios();
+    }
+
+    private void Eliminar()
+    {
+        bool elimino;
+
+        elimino = UsuariosBLL.Eliminar(usuario.UsuarioId);
+
+        if (elimino)
+        {
+            Nuevo();
+            toast.ShowSuccess("Eliminado correctamente");
+        }
+        else
+            toast.ShowError("No fue posible eliminar");
+    }
+
+    private void Guardar()
+    {
+        bool guardo;
+
+        guardo = UsuariosBLL.Guardar(usuario);
+
+        if (guardo)
+        {
+            Nuevo();
+            toast.ShowSuccess("Guardado correctamente");
+        }
+        else
+            toast.ShowError("No fue posible guardar");
+    }
+
+    private void Buscar()
+    {
+        if (usuario.UsuarioId > 0)
+        {
+            var encontrado = UsuariosBLL.Buscar(usuario.UsuarioId);
+
+            if (encontrado != null)
+                this.usuario = encontrado;
+            else
+                toast.ShowWarning("No encontrado");
+        }
+    }
+}
